@@ -90,7 +90,7 @@ wilcoxauc.Seurat <- function(
     ...
 ) {
     requireNamespace("Seurat")
-    X_matrix <- Seurat::GetAssayData(X, assay = seurat_assay, slot = assay)
+    X_matrix <- Seurat::GetAssayData(X, assay = seurat_assay, layer = assay)
     if (is.null(group_by)) {
         y <- Seurat::Idents(X)
     } else {
