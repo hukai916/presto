@@ -85,16 +85,29 @@ wilcoxauc.Seurat <- function(
     X,
     group_by = NULL,
     assay = "data",
+    layer = NULL,
     groups_use = NULL,
     seurat_assay = "RNA",
     ...
 ) {
+    if (is.null(layer)) {
+      stop("The `layer` parameter must be provided!")
+    }
+    if (length(layer) != 1) {
+      stop("Only one layer must be provided!")
+    }
+    if (!(layer %in% Layers(X))) {
+      stop("`layer` must be from Layers(X)!")
+    }
+    
     requireNamespace("Seurat")
-    X_matrix <- Seurat::GetAssayData(X, assay = seurat_assay, layer = assay)
+    X_matrix <- Seurat::GetAssayData(X, assay = seurat_assay, layer = layer)
     if (is.null(group_by)) {
         y <- Seurat::Idents(X)
     } else {
         y <- Seurat::FetchData(X, group_by) %>% unlist %>% as.character()
+        cell_index <- which(X@assays$RNA@cells[, layer])
+        y <- y[cell_index]
     }
     wilcoxauc(X_matrix, y, groups_use)
 }
